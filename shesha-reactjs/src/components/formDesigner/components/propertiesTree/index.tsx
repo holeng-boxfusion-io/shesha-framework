@@ -35,11 +35,37 @@ const PropertiesTreeComponent: IToolboxComponent<IPropertiesTreeProps> = {
     //   );
     // }
 
-    return (
-      <ConfigurableFormItem model={{ ...model, hideLabel: true }}>
-        <PropertiesTree entityType={modelType} />
-      </ConfigurableFormItem>
-    );
+    const defaultValue = `
+      DateOfBirth EmailAddress1 EmailAddress2 Photo { Category CreationTime ParentFile { OwnerId OwnerType IsDeleted Id } } Gender HomeNumber MiddleName Title WorkAddress
+    `;
+    // const defaultValue = `
+    //   DateOfBirth
+    //   EmailAddress1
+    //   EmailAddress2
+    //   Photo {
+    //     Category
+    //     CreationTime
+    //     ParentFile {
+    //       OwnerId
+    //       OwnerType
+    //       IsDeleted
+    //       Id
+    //     }
+    //   }
+    //   Gender
+    //   HomeNumber
+    //   MiddleName
+    //   Title
+    //   WorkAddress
+    // `;
+
+    return <PropertiesTree entityType={modelType} value={defaultValue} />;
+
+    // return (
+    //   <ConfigurableFormItem model={{ ...model, hideLabel: true }}>
+    //     <PropertiesTree entityType={modelType} value={defaultValue} />
+    //   </ConfigurableFormItem>
+    // );
   },
   settingsFormMarkup: data => getSettings(data),
   validateSettings: model => validateConfigurableComponentSettings(getSettings(model), model),

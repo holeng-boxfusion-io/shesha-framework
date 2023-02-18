@@ -30,8 +30,6 @@ export interface IPropertiesTreeState {
   searchValue?: string;
   autoExpandParent?: boolean;
   expandedKeys?: React.Key[];
-  treeData?: IDataNode[];
-  propertiesMap?: Map<string, IDataNode[]>;
   value?: string;
 }
 
@@ -41,6 +39,7 @@ export interface IPropertiesTreeProps {
    */
   entityType: string;
   value?: string;
+  defaultValue?: string;
   onChange?: (value: string) => void;
 
   /**
