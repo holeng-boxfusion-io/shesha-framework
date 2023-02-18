@@ -56,6 +56,7 @@ import PermissionedObjectsTree from '../../../components/formDesigner/components
 import PermissionsTree from '../../../components/formDesigner/components/permissions/permissionsTree/permissionsTree';
 import PermissionTagGroup from '../../../components/formDesigner/components/permissions/permissionTagGroup';
 import Progress from '../../../components/formDesigner/components/progress';
+import PropertiesTree from '../../../components/formDesigner/components/propertiesTree';
 import PropertyAutocomplete from '../../../components/formDesigner/components/propertyAutocomplete';
 import QueryBuilderComponent from '../../../components/formDesigner/components/queryBuilder/queryBuilderComponent';
 import Radio from '../../../components/formDesigner/components/radio/radio';
@@ -111,6 +112,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       PermissionsTree,
       PermissionTagGroup,
       Progress,
+      PropertiesTree,
       PropertyAutocomplete,
       QueryBuilderComponent,
       ReferenceListAutocompleteComponent,
