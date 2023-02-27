@@ -9,6 +9,7 @@ import Show from '../../../show';
 import FormInfo from '../../../configurableForm/formInfo';
 import { ConfigurationItemVersionStatusMap } from '../../../../utils/configurationFramework/models';
 import { IPersistedFormProps } from '../../../../providers/formPersisterProvider/models';
+import { nanoid } from 'nanoid/non-secure';
 
 interface ISubFormProps {
   style?: CSSProperties;
@@ -52,8 +53,8 @@ const SubForm: FC<ISubFormProps> = ({ readOnly }) => {
         <FormInfo {...persistedFormProps} />
       </Show>
       <div style={{ flex: 1 }} data-name={name}>
-        {Object.keys(errors).map((error, index) => (
-          <ValidationErrors key={index} error={errors[error]} />
+        {Object.keys(errors).map(error => (
+          <ValidationErrors key={nanoid()} error={errors[error]} />
         ))}
 
         <div>
