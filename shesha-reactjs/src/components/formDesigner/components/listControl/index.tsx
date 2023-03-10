@@ -2,7 +2,7 @@ import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { OrderedListOutlined } from '@ant-design/icons';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, useFormItem } from '../../../../providers';
+import { useForm, useFormComponentStatesHelpers, useFormItem } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ConfigurableFormItem from '../formItem';
 import './styles/index.less';
@@ -20,7 +20,8 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
   name: 'List',
   icon: <OrderedListOutlined />,
   factory: ({ ...model }: IListComponentProps) => {
-    const { isComponentHidden, formMode } = useForm();
+    const { formMode } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
 
     const isHidden = isComponentHidden(model);
 

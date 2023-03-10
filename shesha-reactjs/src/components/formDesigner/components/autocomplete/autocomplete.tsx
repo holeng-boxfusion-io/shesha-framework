@@ -22,6 +22,7 @@ import moment from 'moment';
 import { isEmpty } from 'lodash';
 import camelCaseKeys from 'camelcase-keys';
 import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
+import { useFormComponentStatesHelpers } from '../../../../providers/form/useFormComponentStatesHelpers';
 
 interface IQueryParamProp {
   id: string;
@@ -68,7 +69,8 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
   factory: (model: IAutocompleteProps, _c, form) => {
     const { queryParams, filter } = model;
-    const { formMode, isComponentDisabled, setFormDataAndInstance } = useForm();
+    const { formMode, setFormDataAndInstance } = useForm();
+    const { isComponentDisabled } = useFormComponentStatesHelpers();
     const { data } = useFormData();
     const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();

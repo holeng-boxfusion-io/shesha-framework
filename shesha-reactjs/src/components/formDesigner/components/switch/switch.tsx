@@ -6,7 +6,7 @@ import React from 'react';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, useFormData } from '../../../../providers';
+import { useForm, useFormComponentStatesHelpers, useFormData } from '../../../../providers';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { SwitchSize } from 'antd/lib/switch';
@@ -21,7 +21,8 @@ const SwitchComponent: IToolboxComponent<ISwitchProps> = {
   icon: <SwitcherOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.boolean,
   factory: ({ size, ...model }: ISwitchProps) => {
-    const { formMode, isComponentDisabled } = useForm();
+    const { formMode } = useForm();
+    const { isComponentDisabled } = useFormComponentStatesHelpers();
     const { data: formData } = useFormData();
 
     const isReadOnly = model?.readOnly || formMode === 'readonly';

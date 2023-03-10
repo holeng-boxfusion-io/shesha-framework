@@ -9,7 +9,7 @@ import settingsFormJson from './settingsForm.json';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import RefListDropDown from '../../../refListDropDown';
 import { DataTypes } from '../../../../interfaces/dataTypes';
-import { evaluateString } from '../../../..';
+import { evaluateString, useFormComponentStatesHelpers } from '../../../..';
 import { useForm, useFormData, useGlobalState, useSheshaApplication } from '../../../../providers';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { customDropDownEventHandler } from '../utils';
@@ -99,7 +99,8 @@ export const Dropdown: FC<IDropdownProps> = ({
   size,
   allowClear = true,
 }) => {
-  const { formMode, isComponentDisabled } = useForm();
+  const { formMode } = useForm();
+  const { isComponentDisabled } = useFormComponentStatesHelpers();
   const { data: formData } = useFormData();
   const { globalState } = useGlobalState();
 

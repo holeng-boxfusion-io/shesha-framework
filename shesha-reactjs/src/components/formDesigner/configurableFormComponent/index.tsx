@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import CustomErrorBoundary from '../../customErrorBoundary';
 import { useFormDesigner } from '../../../providers/formDesigner';
 import { IConfigurableFormComponent } from '../../../interfaces';
+import { useFormComponentStatesHelpers } from '../../../providers/form/useFormComponentStatesHelpers';
 
 export interface IConfigurableFormComponentProps {
   id: string;
@@ -24,16 +25,10 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id }) 
   const componentRef = useRef(null);
   const isDesignMode = formMode === 'designer';
 
-  if (!designer || !isDesignMode || componentModel?.isDynamic) return (
-    <ComponentRenderer id={id} componentRef={componentRef} />
-  );
+  if (!designer || !isDesignMode || componentModel?.isDynamic)
+    return <ComponentRenderer id={id} componentRef={componentRef} />;
 
-  return (
-    <ConfigurableFormComponentDesigner
-      componentModel={componentModel}
-      componentRef={componentRef}
-    />
-  );
+  return <ConfigurableFormComponentDesigner componentModel={componentModel} componentRef={componentRef} />;
 };
 
 interface IComponentRendererProps {
@@ -46,22 +41,22 @@ const ComponentRenderer: FC<IComponentRendererProps> = ({ id, componentRef }) =>
       <FormComponent id={id} componentRef={componentRef} />
     </CustomErrorBoundary>
   );
-}
+};
 
 interface IConfigurableFormComponentDesignerProps {
   componentModel: IConfigurableFormComponent;
   componentRef: MutableRefObject<any>;
 }
-const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerProps> = ({ componentModel, componentRef }) => {
-  const {
-    visibleComponentIds,
-    enabledComponentIds,
-  } = useForm();
-  const {
-    deleteComponent,
-    selectedComponentId,
-    readOnly: readonly,
-  } = useFormDesigner();
+const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerProps> = ({
+  componentModel,
+  componentRef,
+}) => {
+  const { visibleComponentIds, enabledComponentIds } = useFormComponentStatesHelpers();
+  // const {
+  //   visibleComponentIds,
+  //   enabledComponentIds,
+  // } = useForm();
+  const { deleteComponent, selectedComponentId, readOnly: readonly } = useFormDesigner();
 
   const onDeleteClick = () => {
     deleteComponent({ componentId: componentModel.id });
@@ -108,6 +103,6 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
       </div>
     </div>
   );
-}
+};
 
 export default ConfigurableFormComponent;

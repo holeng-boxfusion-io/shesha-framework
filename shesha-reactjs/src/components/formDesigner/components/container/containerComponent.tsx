@@ -3,10 +3,10 @@ import { IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { GroupOutlined } from '@ant-design/icons';
 import ComponentsContainer, { ICommonContainerProps } from '../../componentsContainer';
-import { useForm } from '../../../../providers/form';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { getSettings } from './settingsForm';
 import { useFormData } from '../../../../providers';
+import { useFormComponentStatesHelpers } from '../../../../providers/form/useFormComponentStatesHelpers';
 
 export type ContainerDirection = 'horizontal' | 'vertical';
 
@@ -21,8 +21,8 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
   name: 'Container',
   icon: <GroupOutlined />,
   factory: (model: IContainerComponentProps) => {
-    const { isComponentHidden } = useForm();
     const { data: formData } = useFormData();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
 
     if (isComponentHidden(model)) return null;
 

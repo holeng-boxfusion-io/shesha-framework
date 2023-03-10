@@ -8,6 +8,7 @@ import { useForm } from '../../../../../providers/form';
 import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
 import { Page } from '../../../..';
 import ConditionalWrap from '../../../../conditionalWrapper';
+import { useFormComponentStatesHelpers } from '../../../../../providers';
 
 export interface IMasterDetailsViewProps extends IConfigurableFormComponent {}
 
@@ -18,8 +19,8 @@ const MasterDetailsViewComponent: IToolboxComponent<IMasterDetailsViewProps> = {
   name: 'Master Details View',
   icon: <ProfileOutlined />,
   factory: (model: IMasterDetailsViewProps) => {
-    const { formMode, visibleComponentIds } = useForm()
-    ;
+    const { formMode } = useForm();
+    const { visibleComponentIds } = useFormComponentStatesHelpers();
 
     const hiddenByCondition = visibleComponentIds && !visibleComponentIds.includes(model.id);
 

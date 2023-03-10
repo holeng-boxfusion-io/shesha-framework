@@ -6,6 +6,7 @@ import settingsFormJson from './settingsForm.json';
 import ComponentsContainer from '../../../componentsContainer';
 import { useForm } from '../../../../../providers/form';
 import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
+import { useFormComponentStatesHelpers } from '../../../../../providers';
 
 export interface IMenuViewProps extends IConfigurableFormComponent {}
 
@@ -16,7 +17,8 @@ const MenuViewComponent: IToolboxComponent<IMenuViewProps> = {
   name: 'Menu View',
   icon: <MenuUnfoldOutlined />,
   factory: (model: IMenuViewProps) => {
-    const { formMode, visibleComponentIds } = useForm();
+    const { formMode } = useForm();
+    const { visibleComponentIds } = useFormComponentStatesHelpers();
 
     const hiddenByCondition = visibleComponentIds && !visibleComponentIds.includes(model.id);
 

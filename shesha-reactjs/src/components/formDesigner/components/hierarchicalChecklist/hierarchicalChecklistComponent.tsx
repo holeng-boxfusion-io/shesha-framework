@@ -2,7 +2,7 @@ import { ApartmentOutlined } from '@ant-design/icons';
 import { Skeleton } from 'antd';
 import React, { MutableRefObject } from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
-import { useForm, useFormData } from '../../../../providers';
+import { useFormComponentStatesHelpers, useFormData } from '../../../../providers';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { evaluateValue, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { IHierarchicalCheckListProps } from '../../../hierarchicalCheckList';
@@ -31,7 +31,7 @@ const HierarchicalChecklistComponent: IToolboxComponent<IHierarchicalChecklistPr
   name: 'Hierarchical Checklist',
   icon: <ApartmentOutlined />,
   factory: (model: IHierarchicalChecklistProps, _componentRef: MutableRefObject<any>) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
 
     const { data: formData } = useFormData();
 

@@ -4,7 +4,7 @@ import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { LineOutlined } from '@ant-design/icons';
 import { Progress, ProgressProps } from 'antd';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm } from '../../../../providers';
+import { useFormComponentStatesHelpers } from '../../../../providers';
 import { alertSettingsForm } from './settings';
 import { ProgressType } from 'antd/lib/progress/progress';
 import ConfigurableFormItem from '../formItem';
@@ -25,7 +25,7 @@ const ProgressComponent: IToolboxComponent<IProgressProps> = {
   name: 'Progress',
   icon: <LineOutlined />,
   factory: (model: IProgressProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
     const {
       progressType,
       lineStrokeColor,

@@ -6,6 +6,7 @@ import settingsFormJson from './settingsForm.json';
 import ComponentsContainer from '../../../componentsContainer';
 import { useForm } from '../../../../../providers/form';
 import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
+import { useFormComponentStatesHelpers } from '../../../../../providers';
 
 export interface IDashboardViewProps extends IConfigurableFormComponent {}
 
@@ -16,7 +17,8 @@ const DashboardViewComponent: IToolboxComponent<IDashboardViewProps> = {
   name: 'Dashboard View',
   icon: <BarChartOutlined />,
   factory: (model: IDashboardViewProps) => {
-    const { formMode, visibleComponentIds } = useForm();
+    const { formMode } = useForm();
+    const { visibleComponentIds } = useFormComponentStatesHelpers();
 
     const hiddenByCondition = visibleComponentIds && !visibleComponentIds.includes(model.id);
 

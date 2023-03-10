@@ -10,6 +10,7 @@ import { IButtonGroupButton } from '../../../../providers/buttonGroupConfigurato
 import { useSheshaApplication, useForm, useFormData } from '../../../../providers';
 import { IButtonGroupItemBaseV0, migrateV0toV1 } from './migrations/migrate-v1';
 import { migrateV1toV2 } from './migrations/migrate-v2';
+import { useFormComponentStatesHelpers } from '../../../../providers/form/useFormComponentStatesHelpers';
 
 export type IActionParameters = [{ key: string; value: string }];
 
@@ -22,7 +23,8 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
   name: 'Button',
   icon: <BorderOutlined />,
   factory: ({ style, ...model }: IButtonProps) => {
-    const { isComponentDisabled, isComponentHidden, formMode } = useForm();
+    const { formMode } = useForm();
+    const { isComponentDisabled, isComponentHidden } = useFormComponentStatesHelpers();
     const { data } = useFormData();
 
     const { anyOfPermissionsGranted } = useSheshaApplication();

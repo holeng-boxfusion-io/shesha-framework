@@ -3,7 +3,7 @@ import { IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FilterOutlined } from '@ant-design/icons';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm } from '../../../../providers';
+import { useFormComponentStatesHelpers } from '../../../../providers';
 import { alertSettingsForm } from './settings';
 import { Form } from 'antd';
 
@@ -14,7 +14,7 @@ const FilterComponent: IToolboxComponent<IFilterProps> = {
   name: 'Filter',
   icon: <FilterOutlined />,
   factory: (model: IFilterProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
 
     const isHidden = isComponentHidden(model);
 
@@ -39,9 +39,7 @@ interface IFilterRenderer {
 const IFilterRenderer: FC<IFilterRenderer> = () => {
   return (
     <Fragment>
-      <Form.Item label>
-
-      </Form.Item>
+      <Form.Item label></Form.Item>
       <Form.Item></Form.Item>
     </Fragment>
   );

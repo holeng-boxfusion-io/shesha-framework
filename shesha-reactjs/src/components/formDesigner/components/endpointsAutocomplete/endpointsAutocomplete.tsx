@@ -5,7 +5,7 @@ import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
 import { evaluateValue, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, useFormData } from '../../../../providers';
+import { useForm, useFormComponentStatesHelpers, useFormData } from '../../../../providers';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { EndpointsAutocomplete } from '../../../endpointsAutocomplete/endpointsAutocomplete';
 
@@ -21,7 +21,8 @@ const EndpointsAutocompleteComponent: IToolboxComponent<IEndpointsAutocompleteCo
   icon: <ApiOutlined />,
   isHidden: true,
   factory: (model: IEndpointsAutocompleteComponentProps, _c, _form) => {
-    const { formMode, isComponentDisabled } = useForm();
+    const { formMode } = useForm();
+    const { isComponentDisabled } = useFormComponentStatesHelpers();
     const { data: formData } = useFormData();
 
     const disabled = isComponentDisabled(model);

@@ -30,6 +30,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { useFormDesigner } from '../../providers/formDesigner';
 import { useModelApiEndpoint } from './useActionEndpoint';
 import { StandardEntityActions } from '../../interfaces/metadata';
+import { useFormComponentStatesHelpers } from '../../providers/form/useFormComponentStatesHelpers';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   children,
@@ -52,8 +53,9 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     formMarkup,
     setValidationErrors,
     setFormDataAndInstance,
-    visibleComponentIdsIsSet,
+    // visibleComponentIdsIsSet,
   } = useForm();
+  const { visibleComponentIdsIsSet } = useFormComponentStatesHelpers();
   const { isDragging = false } = useFormDesigner(false) ?? {};
   const {
     excludeFormFieldsInPayload,

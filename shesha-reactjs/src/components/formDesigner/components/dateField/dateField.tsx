@@ -8,7 +8,14 @@ import settingsFormJson from './settingsForm.json';
 import moment, { isMoment, Moment } from 'moment';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { HiddenFormItem } from '../../../hiddenFormItem';
-import { useForm, useFormData, useGlobalState, useMetadata, useSheshaApplication } from '../../../../providers';
+import {
+  useForm,
+  useFormComponentStatesHelpers,
+  useFormData,
+  useGlobalState,
+  useMetadata,
+  useSheshaApplication,
+} from '../../../../providers';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { getPropertyMetadata, getMoment } from '../../../../utils/date';
@@ -157,7 +164,8 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
   const monthFormat = props?.monthFormat || DATE_TIME_FORMATS.month;
   const weekFormat = props?.weekFormat || DATE_TIME_FORMATS.week;
 
-  const { form, formMode, isComponentDisabled, formData } = useForm();
+  const { form, formMode, formData } = useForm();
+  const { isComponentDisabled } = useFormComponentStatesHelpers();
 
   const isDisabled = isComponentDisabled(props);
 

@@ -73,11 +73,13 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 }) => {
   const [state, dispatch] = useReducer(subFormReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
   const { publish } = usePubSub();
-  const { formData = {}, formMode } = useForm();
+  const { formData = {}, formMode } = useForm(false);
   const { globalState, setState: setGlobalState } = useGlobalState();
   const [formConfig, setFormConfig] = useState<UseFormConfigurationArgs>({ formId, lazy: true });
 
   const { backendUrl, httpHeaders } = useSheshaApplication();
+
+  console.log('LOGS:: SubFormProvider name, {{value}}, defaultValue', name, value, defaultValue);
 
   /**
    * Evaluate url using js expression

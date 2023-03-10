@@ -6,24 +6,20 @@ import {
   IRegisterActionsPayload,
   ISetEnabledComponentsPayload,
 } from './contexts';
-import {
-  FormMode,
-  IFlatComponentsStructure,
-  IFormSettings,
-} from './models';
+import { FormMode, IFlatComponentsStructure, IFormSettings } from './models';
 import { FormActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
-import {
-  convertActions,
-  filterFormData,
-} from './utils';
+import { convertActions, filterFormData } from './utils';
 import { IFormValidationErrors } from '../../interfaces';
 
 const reducer = handleActions<IFormStateContext, any>(
   {
-    [FormActionEnums.SetFlatComponentsAction]: (state: IFormStateContext, action: ReduxActions.Action<IFlatComponentsStructure>) => {
+    [FormActionEnums.SetFlatComponentsAction]: (
+      state: IFormStateContext,
+      action: ReduxActions.Action<IFlatComponentsStructure>
+    ) => {
       const { payload } = action;
-      
+
       //console.log('LOG: SetFlatComponentsAction', payload);
 
       return {
@@ -35,12 +31,12 @@ const reducer = handleActions<IFormStateContext, any>(
 
     [FormActionEnums.SetSettingsAction]: (state: IFormStateContext, action: ReduxActions.Action<IFormSettings>) => {
       const { payload } = action;
-      
+
       return {
         ...state,
         formSettings: payload,
       };
-    },    
+    },
 
     [FormActionEnums.SetFormMode]: (state: IFormStateContext, action: ReduxActions.Action<FormMode>) => {
       const { payload } = action;
@@ -51,30 +47,30 @@ const reducer = handleActions<IFormStateContext, any>(
       };
     },
 
-    [FormActionEnums.SetVisibleComponents]: (
-      state: IFormStateContext,
-      action: ReduxActions.Action<ISetVisibleComponentsPayload>
-    ) => {
-      const { payload } = action;
+    // [FormActionEnums.SetVisibleComponents]: (
+    //   state: IFormStateContext,
+    //   action: ReduxActions.Action<ISetVisibleComponentsPayload>
+    // ) => {
+    //   const { payload } = action;
 
-      return {
-        ...state,
-        visibleComponentIds: payload.componentIds,
-        visibleComponentIdsIsSet: true,
-      };
-    },
+    //   return {
+    //     ...state,
+    //     visibleComponentIds: payload.componentIds,
+    //     visibleComponentIdsIsSet: true,
+    //   };
+    // },
 
-    [FormActionEnums.SetEnabledComponents]: (
-      state: IFormStateContext,
-      action: ReduxActions.Action<ISetEnabledComponentsPayload>
-    ) => {
-      const { payload } = action;
+    // [FormActionEnums.SetEnabledComponents]: (
+    //   state: IFormStateContext,
+    //   action: ReduxActions.Action<ISetEnabledComponentsPayload>
+    // ) => {
+    //   const { payload } = action;
 
-      return {
-        ...state,
-        enabledComponentIds: payload.componentIds,
-      };
-    },
+    //   return {
+    //     ...state,
+    //     enabledComponentIds: payload.componentIds,
+    //   };
+    // },
 
     [FormActionEnums.SetFormData]: (state: IFormStateContext, action: ReduxActions.Action<ISetFormDataPayload>) => {
       const { payload } = action;

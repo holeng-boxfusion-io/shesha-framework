@@ -7,7 +7,13 @@ import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
 import { evaluateString, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, useFormData, useGlobalState, useSheshaApplication } from '../../../../providers';
+import {
+  useForm,
+  useFormComponentStatesHelpers,
+  useFormData,
+  useGlobalState,
+  useSheshaApplication,
+} from '../../../../providers';
 import { customEventHandler } from '../utils';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
@@ -49,7 +55,8 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
       dataFormat === StringFormats.phoneNumber ||
       dataFormat === StringFormats.password),
   factory: (model: ITextFieldProps, _c, form) => {
-    const { formMode, isComponentDisabled, setFormDataAndInstance } = useForm();
+    const { formMode, setFormDataAndInstance } = useForm();
+    const { isComponentDisabled } = useFormComponentStatesHelpers();
     const { data: formData } = useFormData();
     const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();

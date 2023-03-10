@@ -5,7 +5,7 @@ import { SplitCellsOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
 import ColumnsSettings from './columnsSettings';
 import ComponentsContainer from '../../componentsContainer';
-import { useForm } from '../../../../providers';
+import { useFormComponentStatesHelpers } from '../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
 
 export interface IColumnProps {
@@ -28,7 +28,7 @@ const ColumnsComponent: IToolboxComponent<IColumnsComponentProps> = {
   name: 'Columns',
   icon: <SplitCellsOutlined />,
   factory: model => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
     const { columns, gutterX = 0, gutterY = 0 } = model as IColumnsComponentProps;
 
     if (isComponentHidden(model)) return null;

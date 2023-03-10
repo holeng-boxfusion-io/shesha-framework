@@ -42,6 +42,8 @@ const TypographyComponent: FC<ITextTypographyProps> = ({
   const { data: formData } = useFormData();
   const { globalState } = useGlobalState();
 
+  console.log('LOGS:: TypographyComponent formData', formData);
+
   // NOTE: to be replaced with a generic context implementation
   const sizeIdentifier = textType === 'title' ? level : fontSize;
 

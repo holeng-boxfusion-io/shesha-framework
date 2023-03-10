@@ -1,7 +1,7 @@
 import { UnorderedListOutlined } from '@ant-design/icons';
 import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
-import { useForm } from '../../../../providers';
+import { useForm, useFormComponentStatesHelpers } from '../../../../providers';
 import ConfigurableFormItem from '../formItem';
 import ChildEntitiesTagGroupControl from './control';
 import { IChildEntitiesTagGroupProps } from './models';
@@ -12,7 +12,8 @@ const ChildEntitiesTagGroup: IToolboxComponent<IChildEntitiesTagGroupProps> = {
   name: 'Child Entities Tag Group',
   icon: <UnorderedListOutlined />,
   factory: (model: IChildEntitiesTagGroupProps) => {
-    const { isComponentHidden, formMode } = useForm();
+    const { formMode } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
 
     const isHidden = isComponentHidden(model);
 

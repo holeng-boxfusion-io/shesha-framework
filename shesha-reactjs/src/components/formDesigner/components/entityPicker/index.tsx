@@ -6,7 +6,7 @@ import ConfigurableFormItem from '../formItem';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { EntityPicker } from '../../..';
 import { Alert } from 'antd';
-import { useForm } from '../../../../providers';
+import { useForm, useFormComponentStatesHelpers } from '../../../../providers';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { IConfigurableColumnsBase } from '../../../../providers/datatableColumnsConfigurator/models';
 import { migrateV0toV1 } from './migrations/migrate-v1';
@@ -42,7 +42,8 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
   factory: (model: IEntityPickerComponentProps) => {
     const { filters, modalWidth, customWidth, widthUnits } = model;
-    const { formMode, isComponentDisabled } = useForm();
+    const { formMode } = useForm();
+    const { isComponentDisabled } = useFormComponentStatesHelpers();
 
     const isReadOnly = model?.readOnly || formMode === 'readonly';
 
@@ -114,7 +115,9 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
         };
       })
       .add<IEntityPickerComponentProps>(1, migrateV0toV1)
-      .add<IEntityPickerComponentProps>(2, prev => { return { ...prev, useRawValues: true }; }),
+      .add<IEntityPickerComponentProps>(2, prev => {
+        return { ...prev, useRawValues: true };
+      }),
   settingsFormMarkup: entityPickerSettings,
   validateSettings: model => validateConfigurableComponentSettings(entityPickerSettings, model),
 };

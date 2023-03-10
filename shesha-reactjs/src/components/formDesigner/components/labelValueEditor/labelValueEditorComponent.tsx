@@ -7,7 +7,7 @@ import { ILabelValueEditorPropsBase } from './models';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm } from '../../../../providers';
+import { useForm, useFormComponentStatesHelpers } from '../../../../providers';
 import { ICodeExposedVariable } from '../../../codeVariablesTable';
 
 export interface ILabelValueEditorProps extends IConfigurableFormComponent, ILabelValueEditorPropsBase {
@@ -22,14 +22,15 @@ const LabelValueEditorComponent: IToolboxComponent<ILabelValueEditorProps> = {
   name: 'Label Value editor',
   icon: <OneToOneOutlined />,
   factory: model => {
-    const { isComponentHidden, formMode } = useForm();
+    const { formMode } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
     const customProps = model as ILabelValueEditorProps;
 
     if (isComponentHidden(model)) return null;
 
     return (
       <ConfigurableFormItem model={model}>
-        <LabelValueEditor {...customProps} readOnly={ formMode === 'readonly' }/>
+        <LabelValueEditor {...customProps} readOnly={formMode === 'readonly'} />
       </ConfigurableFormItem>
     );
   },

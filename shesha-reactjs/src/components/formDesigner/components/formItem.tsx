@@ -6,6 +6,7 @@ import { getFieldNameFromExpression, getValidationRules } from '../../../provide
 import classNames from 'classnames';
 import './styles.less';
 import { useFormItem } from '../../../providers';
+import { useFormComponentStatesHelpers } from '../../../providers/form/useFormComponentStatesHelpers';
 
 export interface IConfigurableFormItemProps {
   model: IConfigurableFormComponent;
@@ -27,7 +28,8 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
   labelCol,
   wrapperCol,
 }) => {
-  const { isComponentHidden, formData } = useForm();
+  const { formData } = useForm();
+  const { isComponentHidden } = useFormComponentStatesHelpers();
 
   const formItem = useFormItem();
 

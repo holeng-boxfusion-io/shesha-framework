@@ -11,5 +11,5 @@ export const useFormData = () => {
 
   const data = subForm?.value ?? form?.formData;
 
-  return { data };
+  return { data, name: subForm?.name };
 };

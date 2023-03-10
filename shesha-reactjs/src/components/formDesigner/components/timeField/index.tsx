@@ -8,7 +8,7 @@ import settingsFormJson from './settingsForm.json';
 import moment, { Moment, isMoment } from 'moment';
 
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, useFormData } from '../../../../providers';
+import { useForm, useFormComponentStatesHelpers, useFormData } from '../../../../providers';
 import { HiddenFormItem } from '../../../hiddenFormItem';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
@@ -107,7 +107,8 @@ export const TimePickerWrapper: FC<ITimePickerProps> = ({
   secondStep,
   ...rest
 }) => {
-  const { form, formMode, isComponentDisabled } = useForm();
+  const { form, formMode } = useForm();
+  const { isComponentDisabled } = useFormComponentStatesHelpers();
   const { data: formData } = useFormData();
   const evaluatedValue = getMoment(value, format);
 

@@ -8,7 +8,7 @@ import settingsFormJson from './settingsForm.json';
 import React from 'react';
 import { evaluateString, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { DataTypes } from '../../../../interfaces/dataTypes';
-import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
+import { useForm, useFormComponentStatesHelpers, useGlobalState, useSheshaApplication } from '../../../../providers';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { customInputNumberEventHandler } from '../utils';
 import { axiosHttp } from '../../../../apis/axios';
@@ -23,7 +23,8 @@ const NumberField: IToolboxComponent<INumberFieldProps> = {
   icon: <NumberOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.number,
   factory: (model: INumberFieldProps, _c, form) => {
-    const { formMode, isComponentDisabled, formData, setFormDataAndInstance } = useForm();
+    const { formMode, formData, setFormDataAndInstance } = useForm();
+    const { isComponentDisabled } = useFormComponentStatesHelpers();
     const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();
 

@@ -1,6 +1,6 @@
 import { LockOutlined } from '@ant-design/icons';
 import React, { Fragment } from 'react';
-import { useForm } from '../../../..';
+import { useForm, useFormComponentStatesHelpers } from '../../../..';
 import { IToolboxComponent } from '../../../../interfaces';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
 import { FormMarkup } from '../../../../providers/form/models';
@@ -20,7 +20,8 @@ const PasswordComboComponent: IToolboxComponent<IPasswordComponentProps> = {
   factory: (model: IPasswordComponentProps) => {
     const defaultModel = getDefaultModel(model);
     const { placeholder, confirmPlaceholder, message, minLength } = defaultModel || {};
-    const { formData, isComponentHidden } = useForm();
+    const { formData } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
 
     const options = { isComponentHidden, formData };
 

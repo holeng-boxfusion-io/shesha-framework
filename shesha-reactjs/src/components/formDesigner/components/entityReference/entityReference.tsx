@@ -2,10 +2,10 @@ import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import ConfigurableFormItem from '../formItem';
-import { useForm } from '../../../..';
 import { EntityReference, IEntityReferenceProps } from '../../../entityReference';
 import { LinkExternalOutlined } from '../../../../icons/linkExternalOutlined';
 import { EntityReferenceSettings } from './settings';
+import { useFormComponentStatesHelpers } from '../../../../providers/form/useFormComponentStatesHelpers';
 
 export type IActionParameters = [{ key: string; value: string }];
 
@@ -16,7 +16,7 @@ const EntityReferenceComponent: IToolboxComponent<IEntityReferenceControlProps> 
   name: 'EntityReference',
   icon: <LinkExternalOutlined />,
   factory: ({ style, ...model }: IEntityReferenceControlProps) => {
-    const { isComponentDisabled, isComponentHidden } = useForm();
+    const { isComponentDisabled, isComponentHidden } = useFormComponentStatesHelpers();
 
     const { id, isDynamic, hidden, disabled } = model;
 
@@ -25,12 +25,7 @@ const EntityReferenceComponent: IToolboxComponent<IEntityReferenceControlProps> 
 
     return (
       <ConfigurableFormItem model={model}>
-        {!isHidden &&
-            <EntityReference
-                {...model}
-                disabled={isDisabled}
-            />
-        }
+        {!isHidden && <EntityReference {...model} disabled={isDisabled} />}
       </ConfigurableFormItem>
     );
   },

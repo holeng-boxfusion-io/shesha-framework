@@ -4,7 +4,7 @@ import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/fo
 import { TableOutlined } from '@ant-design/icons';
 import settingsFormJson from './settingsForm.json';
 import { Alert } from 'antd';
-import { ChildTable, IChildTableProps } from '../../../../';
+import { ChildTable, IChildTableProps, useFormComponentStatesHelpers } from '../../../../';
 import { useForm, useFormData } from '../../../../providers';
 import { DataTableFullInstance } from '../../../../providers/dataTable/contexts';
 import { useDataTableState } from '../../../../providers';
@@ -25,7 +25,7 @@ const ChildDataTableComponent: IToolboxComponent<IChildDataTableProps> = {
   factory: (model: IChildDataTableProps) => {
     const { entityType, parentEntityId, label } = model;
     const { data: formData } = useFormData();
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
 
     const tableRef = useRef<DataTableFullInstance>(null);
     const { registerActions } = useForm();

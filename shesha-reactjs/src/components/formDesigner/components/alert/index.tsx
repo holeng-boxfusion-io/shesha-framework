@@ -4,9 +4,10 @@ import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, useFormData } from '../../../../providers';
+import { useFormData } from '../../../../providers';
 import { getSettings } from './settings';
 import ShaIcon from '../../../shaIcon';
+import { useFormComponentStatesHelpers } from '../../../../providers/form/useFormComponentStatesHelpers';
 
 export interface IAlertProps extends IConfigurableFormComponent {
   text: string;
@@ -22,7 +23,7 @@ const AlertComponent: IToolboxComponent<IAlertProps> = {
   name: 'Alert',
   icon: <ExclamationCircleOutlined />,
   factory: (model: IAlertProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
     const { data } = useFormData();
     const { text, alertType, description, showIcon, closable, icon, style } = model;
 

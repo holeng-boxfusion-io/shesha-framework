@@ -6,7 +6,13 @@ import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
 import React, { Fragment } from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, useFormData, useGlobalState, useSheshaApplication } from '../../../../providers';
+import {
+  useForm,
+  useFormComponentStatesHelpers,
+  useFormData,
+  useGlobalState,
+  useSheshaApplication,
+} from '../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
 import TabSettings from './settings';
 import { ITabsComponentProps } from './models';
@@ -23,7 +29,8 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
   icon: <FolderOutlined />,
   factory: model => {
     const { anyOfPermissionsGranted } = useSheshaApplication();
-    const { isComponentHidden, formMode } = useForm();
+    const { formMode } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
     const { globalState } = useGlobalState();
     const { data: formData } = useFormData();
 

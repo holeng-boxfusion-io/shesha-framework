@@ -7,7 +7,12 @@ import { Alert, Menu } from 'antd';
 import { IButtonGroupButton, ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfigurator/models';
 import { useForm } from '../../../../../providers/form';
 import { ConfigurableButton } from '../configurableButton';
-import { useSheshaApplication, useDataTableSelection, useGlobalState } from '../../../../../providers';
+import {
+  useSheshaApplication,
+  useDataTableSelection,
+  useGlobalState,
+  useFormComponentStatesHelpers,
+} from '../../../../../providers';
 import moment from 'moment';
 import { executeExpression, getStyle } from '../../../../../providers/form/utils';
 import { getButtonGroupItems, getButtonGroupMenuItem } from './utils';
@@ -20,7 +25,8 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
   icon: <GroupOutlined />,
   factory: (props: IButtonGroupProps) => {
     const model = { ...props, items: getButtonGroupItems(props) } as IButtonGroupProps;
-    const { isComponentHidden, formMode } = useForm();
+    const { formMode } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
     const { anyOfPermissionsGranted } = useSheshaApplication();
     const hidden = isComponentHidden({ id: model?.id, isDynamic: model?.isDynamic, hidden: model?.hidden });
     const granted = anyOfPermissionsGranted(model?.permissions || []);

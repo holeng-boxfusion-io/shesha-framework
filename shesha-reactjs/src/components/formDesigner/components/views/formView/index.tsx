@@ -3,7 +3,7 @@ import { IToolboxComponent } from '../../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../../providers/form/models';
 import { FormOutlined } from '@ant-design/icons';
 import settingsFormJson from './settingsForm.json';
-import { CollapsiblePanel } from '../../../../..';
+import { CollapsiblePanel, useFormComponentStatesHelpers } from '../../../../..';
 import ComponentsContainer from '../../../componentsContainer';
 import { ExpandIconPosition } from 'antd/lib/collapse/Collapse';
 import { useForm } from '../../../../../providers/form';
@@ -20,7 +20,8 @@ const DetailsViewComponent: IToolboxComponent<ICollapsiblePanelProps> = {
   name: 'Form View',
   icon: <FormOutlined />,
   factory: (model: ICollapsiblePanelProps) => {
-    const { formMode, visibleComponentIds } = useForm();
+    const { formMode } = useForm();
+    const { visibleComponentIds } = useFormComponentStatesHelpers();
     const { label, expandIconPosition } = model;
 
     const hiddenByCondition = visibleComponentIds && !visibleComponentIds.includes(model.id);

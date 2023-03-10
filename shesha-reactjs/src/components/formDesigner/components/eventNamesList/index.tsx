@@ -4,7 +4,7 @@ import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { ThunderboltOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm } from '../../../../providers';
+import { useFormComponentStatesHelpers } from '../../../../providers';
 import { alertSettingsForm } from './settings';
 import { EVENTS } from './eventNames';
 import ConfigurableFormItem from '../formItem';
@@ -17,7 +17,7 @@ const EventNamesComponent: IToolboxComponent<IEventNamesComponentProps> = {
   icon: <ThunderboltOutlined />,
   isHidden: true,
   factory: (model: IEventNamesComponentProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
 
     const isHidden = isComponentHidden(model);
 

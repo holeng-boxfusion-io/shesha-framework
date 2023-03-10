@@ -2,7 +2,14 @@ import { TableOutlined } from '@ant-design/icons';
 import { Alert, Space } from 'antd';
 import React, { Fragment, MutableRefObject } from 'react';
 import { CollapsiblePanel, GlobalTableFilter, Show, TablePager } from '../../../..';
-import { evaluateString, useDataTable, useForm, useGlobalState, useSheshaApplication } from '../../../../..';
+import {
+  evaluateString,
+  useDataTable,
+  useForm,
+  useFormComponentStatesHelpers,
+  useGlobalState,
+  useSheshaApplication,
+} from '../../../../..';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces';
 import { FormMarkup } from '../../../../../providers/form/models';
@@ -30,7 +37,8 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
   name: 'Child Table',
   icon: <TableOutlined />,
   factory: (model: IChildTableComponentProps, componentRef: MutableRefObject<any>) => {
-    const { formData, formMode, isComponentHidden } = useForm();
+    const { formData, formMode } = useForm();
+    const { isComponentHidden } = useFormComponentStatesHelpers();
     const { columns, setPredefinedFilters } = useDataTable();
 
     const { globalState } = useGlobalState();
@@ -107,9 +115,6 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
     //#endregion
 
     const granted = anyOfPermissionsGranted(permissions || []);
-
-
-
 
     const isVisible = !isComponentHidden(model) && (granted || formMode == 'designer');
 
