@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Shesha.ConfigurationItems.Models;
+using StackExchange.Profiling;
 using System;
 using System.Threading.Tasks;
 
@@ -34,20 +35,29 @@ namespace Shesha.ConfigurationItems
                 ? myStatus
                 : (ConfigurationItemViewMode?)null;
 
-            if (configItemMode.HasValue || !string.IsNullOrEmpty(frontEndApp))
+            try
             {
-                using (_cfRuntime.BeginScope(a => 
+                MiniProfiler.StartNew();
+                if (configItemMode.HasValue || !string.IsNullOrEmpty(frontEndApp))
                 {
-                    a.ViewMode = configItemMode.HasValue
-                        ? configItemMode.Value
-                        : ConfigurationItemViewMode.Live;
-                    a.FrontEndApplication = frontEndApp;
-                }))
-                {
-                    await next(context);
+                    using (_cfRuntime.BeginScope(a =>
+                    {
+                        a.ViewMode = configItemMode.HasValue
+                            ? configItemMode.Value
+                            : ConfigurationItemViewMode.Live;
+                        a.FrontEndApplication = frontEndApp;
+                    }))
+                    {
+                        await next(context);
+                    }
                 }
-            } else
-                await next(context);
+                else
+                    await next(context);
+            }
+            finally
+            {
+                MiniProfiler.Current?.Stop();
+            }
         }
     }
 }

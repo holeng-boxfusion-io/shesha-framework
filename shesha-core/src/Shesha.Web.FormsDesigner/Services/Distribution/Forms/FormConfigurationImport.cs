@@ -1,11 +1,13 @@
 ﻿using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Castle.Core.Logging;
 using Newtonsoft.Json;
 using Shesha.ConfigurationItems.Distribution;
 using Shesha.Domain;
 using Shesha.Domain.ConfigurationItems;
 using Shesha.Web.FormsDesigner.Domain;
+using StackExchange.Profiling;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -22,6 +24,7 @@ namespace Shesha.Web.FormsDesigner.Services.Distribution
         private readonly IRepository<Module, Guid> _moduleRepo;
         private readonly IFormManager _formManger;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
+        public ILogger Logger { get; set; } = NullLogger.Instance;
 
         public FormConfigurationImport(IFormManager formManger, IRepository<FormConfiguration, Guid> formConfigRepo, IRepository<ConfigurationItem, Guid> configItemRepository, IRepository<Module, Guid> moduleRepo, IUnitOfWorkManager unitOfWorkManager)
         {
@@ -60,7 +63,8 @@ namespace Shesha.Web.FormsDesigner.Services.Distribution
         protected async Task<ConfigurationItemBase> ImportFormAsync(DistributedFormConfiguration item, IConfigurationItemsImportContext context)
         {
             // check if form exists
-            var existingForm = await _formConfigRepo.FirstOrDefaultAsync(f => f.Configuration.Name == item.Name && (f.Configuration.Module == null && item.ModuleName == null || f.Configuration.Module.Name == item.ModuleName) && f.Configuration.IsLast);
+            
+            var existingForm = await MiniProfiler.Current.Inline(() => _formConfigRepo.FirstOrDefaultAsync(f => f.Configuration.Name == item.Name && (f.Configuration.Module == null && item.ModuleName == null || f.Configuration.Module.Name == item.ModuleName) && f.Configuration.IsLast), "existingForm");
 
             // use status specified in the context with fallback to imported value
             var statusToImport = context.ImportStatusAs ?? item.VersionStatus;
@@ -72,39 +76,59 @@ namespace Shesha.Web.FormsDesigner.Services.Distribution
                     case ConfigurationItemVersionStatus.Ready: 
                     {
                         // cancel existing version
-                        await _formManger.CancelVersoinAsync(existingForm);
+                        using (MiniProfiler.Current.Step("form:cancel version")) 
+                        {
+                            await _formManger.CancelVersoinAsync(existingForm);
+                        }
                         break;
                     }
                 }
                 // mark existing live form as retired if we import new form as live
                 if (statusToImport == ConfigurationItemVersionStatus.Live) 
                 {
-                    var liveForm = existingForm.Configuration.VersionStatus == ConfigurationItemVersionStatus.Live
-                        ? existingForm
-                        : await _formConfigRepo.FirstOrDefaultAsync(f => f.Configuration.Name == item.Name && (f.Configuration.Module == null && item.ModuleName == null || f.Configuration.Module.Name == item.ModuleName) && f.Configuration.VersionStatus == ConfigurationItemVersionStatus.Live);
-                    if (liveForm != null)
+                    using (MiniProfiler.Current.Step("form:check live")) 
                     {
-                        await _formManger.UpdateStatusAsync(liveForm, ConfigurationItemVersionStatus.Retired);
-                        await _unitOfWorkManager.Current.SaveChangesAsync(); // save changes to guarantee sequence of update
+                        var liveForm = existingForm.Configuration.VersionStatus == ConfigurationItemVersionStatus.Live
+                            ? existingForm
+                            : await _formConfigRepo.FirstOrDefaultAsync(f => f.Configuration.Name == item.Name && (f.Configuration.Module == null && item.ModuleName == null || f.Configuration.Module.Name == item.ModuleName) && f.Configuration.VersionStatus == ConfigurationItemVersionStatus.Live);
+                        if (liveForm != null)
+                        {
+                            using (MiniProfiler.Current.Step("form:retire live")) 
+                            {
+                                await _formManger.UpdateStatusAsync(liveForm, ConfigurationItemVersionStatus.Retired);
+                            }
+                            using (MiniProfiler.Current.Step("form:retire live - save")) 
+                            {
+                                Logger.Warn("before");
+                                await _unitOfWorkManager.Current.SaveChangesAsync(); // save changes to guarantee sequence of update
+                                Logger.Warn("after");
+                            }
+                        }
                     }
                 }
 
-                // create new version
-                var newFormVersion = await _formManger.CreateNewVersionAsync(existingForm);
-                MapToForm(item, newFormVersion);
+                using (MiniProfiler.Current.Step("form:new version")) 
+                {
+                    // create new version
+                    var newFormVersion = await MiniProfiler.Current.Inline(() => _formManger.CreateNewVersionAsync(existingForm), "form:CreateNewVersionAsync");
+                    MapToForm(item, newFormVersion);
 
-                // important: set status according to the context
-                newFormVersion.Configuration.VersionStatus = statusToImport;
-                newFormVersion.Configuration.CreatedByImport = context.ImportResult;
-                newFormVersion.Normalize();
+                    // important: set status according to the context
+                    newFormVersion.Configuration.VersionStatus = statusToImport;
+                    newFormVersion.Configuration.CreatedByImport = context.ImportResult;
+                    newFormVersion.Normalize();
 
-                // todo: save external Id
-                // how to handle origin?
+                    // todo: save external Id
+                    // how to handle origin?
 
-                await _configItemRepository.UpdateAsync(newFormVersion.Configuration);
-                await _formConfigRepo.UpdateAsync(newFormVersion);
+                    using (MiniProfiler.Current.Step("form:update existing")) 
+                    {
+                        await _configItemRepository.UpdateAsync(newFormVersion.Configuration);
+                        await _formConfigRepo.UpdateAsync(newFormVersion);
+                    }
 
-                return newFormVersion;
+                    return newFormVersion;
+                }
             } else 
             {
                 var newForm = new FormConfiguration();
@@ -120,11 +144,13 @@ namespace Shesha.Web.FormsDesigner.Services.Distribution
 
                 newForm.Normalize();
 
-                await _configItemRepository.InsertAsync(newForm.Configuration);
-                await _formConfigRepo.InsertAsync(newForm);
-                
+                using (MiniProfiler.Current.Step("form:create new")) 
+                {
+                    await _configItemRepository.InsertAsync(newForm.Configuration);
+                    await _formConfigRepo.InsertAsync(newForm);
 
-                return newForm;
+                    return newForm;
+                }
             }
         }
 

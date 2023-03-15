@@ -7,8 +7,10 @@ using Shesha.ConfigurationItems.Distribution.Models;
 using Shesha.Domain;
 using Shesha.Domain.ConfigurationItems;
 using Shesha.Exceptions;
+using Shesha.Extensions;
 using Shesha.Services;
 using Shesha.Utilities;
+using StackExchange.Profiling;
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -167,41 +169,47 @@ namespace Shesha.ConfigurationItems.Distribution
 
                 foreach (var item in package.Items)
                 {
-                    context.CancellationToken.ThrowIfCancellationRequested();
-
-                    try
+                    using (MiniProfiler.Current.Step("ImportItem:" + item.ItemType)) 
                     {
-                        using (var jsonStream = item.StreamGetter())
+                        context.CancellationToken.ThrowIfCancellationRequested();
+
+                        try
                         {
-                            var itemDto = await item.Importer.ReadFromJsonAsync(jsonStream);
-
-                            var shouldImport = context.ShouldImportItem == null || context.ShouldImportItem.Invoke(itemDto);
-
-                            if (shouldImport)
+                            using (var jsonStream = item.StreamGetter())
                             {
-                                await item.Importer.ImportItemAsync(itemDto, context);
+                                var itemDto = await MiniProfiler.Current.Inline(() => item.Importer.ReadFromJsonAsync(jsonStream), "read json:" + item.ItemType);
+
+                                var shouldImport = MiniProfiler.Current.Inline(() => context.ShouldImportItem == null || context.ShouldImportItem.Invoke(itemDto), "should import:" + item.ItemType);
+
+                                if (shouldImport)
+                                {
+                                    using (MiniProfiler.Current.Step("ImportItemAsync:" + item.ItemType)) 
+                                    {
+                                        await item.Importer.ImportItemAsync(itemDto, context);
+                                    }
+                                }
+                                else
+                                    context.Logger.Info($"Item skipped by condition");
+
                             }
-                            else
-                                context.Logger.Info($"Item skipped by condition");
-
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        context.Logger.Error($"Item import failed", e);
-                        throw;
-                    }
+                        catch (Exception e)
+                        {
+                            context.Logger.Error($"Item import failed", e);
+                            throw;
+                        }
 
-                    var span = (Clock.Now - startTime);
-                    var speed = Math.Round(rowNo / (span.TotalSeconds > 0 ? span.TotalSeconds : 1), 2);
-                    //importResult.AvgSpeed = Convert.ToDecimal(speed);
-                    var estimated = new TimeSpan(span.Ticks / rowNo * totalItems);
-                    context.Logger.Info($"processed {rowNo} from {totalItems} ({(double)rowNo / totalItems * 100:0.#}%), estimated time = {estimated.Minutes:D2}:{estimated.Seconds:D2}:{estimated.Milliseconds:D3}, speed = {speed} row/sec");
-                    rowNo++;
+                        var span = (Clock.Now - startTime);
+                        var speed = Math.Round(rowNo / (span.TotalSeconds > 0 ? span.TotalSeconds : 1), 2);
+                        //importResult.AvgSpeed = Convert.ToDecimal(speed);
+                        var estimated = new TimeSpan(span.Ticks / rowNo * totalItems);
+                        context.Logger.Info($"processed {rowNo} from {totalItems} ({(double)rowNo / totalItems * 100:0.#}%), estimated time = {estimated.Minutes:D2}:{estimated.Seconds:D2}:{estimated.Milliseconds:D3}, speed = {speed} row/sec");
+                        rowNo++;
 
-                    await updateResultAsync(res => {
-                        res.AvgSpeed = Convert.ToDecimal(speed);
-                    });
+                        await updateResultAsync(res => {
+                            res.AvgSpeed = Convert.ToDecimal(speed);
+                        });
+                    }
                 }
 
                 context.Logger.Info($"Package imported successfully");
