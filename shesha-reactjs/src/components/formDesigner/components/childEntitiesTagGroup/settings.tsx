@@ -49,7 +49,19 @@ export const ChildEntitiesTagGroupSettings: FC<IChildEntitiesTagGroupSettingsPro
         <Checkbox disabled={readOnly} />
       </Form.Item>
 
-      <SectionSeparator title="Display" />
+      <SectionSeparator title="Modal Display" />
+
+      <FormItem name="deleteConfirmationTitle" label="Delete Confirmation Title">
+        <Input readOnly={readOnly} />
+      </FormItem>
+
+      <FormItem name="deleteConfirmationBody" label="Delete Confirmation Body">
+        <Input readOnly={readOnly} />
+      </FormItem>
+
+      <FormItem name="modalTitle" label="Modal Title">
+        <Input readOnly={readOnly} />
+      </FormItem>
 
       <FormItem name="modalWidth" label="Modal Width">
         <Select disabled={readOnly} defaultValue="60%">
@@ -61,6 +73,14 @@ export const ChildEntitiesTagGroupSettings: FC<IChildEntitiesTagGroupSettingsPro
       </FormItem>
 
       <SectionSeparator title="Render" />
+
+      <FormItem name="capturedProperties" label="Captured Properties">
+        <Select mode="tags" />
+      </FormItem>
+
+      <FormItem name="formId" label="Form Path">
+        <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
+      </FormItem>
 
       <FormItem name="labelFormat" label="Label Format" required>
         <CodeEditor
@@ -74,23 +94,25 @@ export const ChildEntitiesTagGroupSettings: FC<IChildEntitiesTagGroupSettingsPro
           description="Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key."
           exposedVariables={[
             {
-              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              id: 'ee243565-14ba-4c98-af34-adac37c83baa',
               name: 'data',
               description: 'Form data',
               type: 'object',
             },
             {
-              id: '65b71112-d412-401f-af15-1d3080f85319',
+              id: '3d53b1ae-1e15-4519-9d07-af6b4225416e',
               name: 'globalState',
               description: 'The global state',
               type: 'object',
             },
+            {
+              id: '3a288d08-a00c-4458-a6ff-a00da9bd070b',
+              name: 'formMode',
+              description: 'Editable state of form',
+              type: "'designer' | 'edit' | 'readonly'",
+            },
           ]}
         />
-      </FormItem>
-
-      <FormItem name="formId" label="Form Path">
-        <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
       </FormItem>
 
       <SectionSeparator title="Visibility" />

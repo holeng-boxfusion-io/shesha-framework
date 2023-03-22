@@ -1,4 +1,4 @@
-import Address from '../../../components/formDesigner/components/address/addressComponent';
+import Address from '../../../components/formDesigner/components/address';
 import Alert from '../../../components/formDesigner/components/alert';
 import AttachmentsEditor from '../../../components/formDesigner/components/attachmentsEditor/attachmentsEditor';
 import Autocomplete from '../../../components/formDesigner/components/autocomplete/autocomplete';
@@ -45,6 +45,7 @@ import FormAutocompleteComponent from '../../../components/formDesigner/componen
 import HierarchicalChecklistComponent from '../../../components/formDesigner/components/hierarchicalChecklist/hierarchicalChecklistComponent';
 import IconPicker from '../../../components/formDesigner/components/iconPicker';
 import Image from '../../../components/formDesigner/components/image';
+import ImageAnnotationComponent from '../../../components/formDesigner/components/imageAnnotation';
 import KeyValueEditor from '../../../components/formDesigner/components/labelValueEditor/labelValueEditorComponent';
 import Paragraph from '../../../components/formDesigner/components/legacy/paragraph';
 import Title from '../../../components/formDesigner/components/legacy/title';
@@ -105,6 +106,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       FormAutocompleteComponent,
       IconPicker,
       Image,
+      ImageAnnotationComponent,
       HierarchicalChecklistComponent,
       KeyValueEditor,
       List,

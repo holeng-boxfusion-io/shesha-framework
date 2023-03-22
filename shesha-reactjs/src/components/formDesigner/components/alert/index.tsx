@@ -3,8 +3,8 @@ import { IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
-import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useFormData } from '../../../../providers';
+import { evaluateString, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { useFormData, useGlobalState } from '../../../../providers';
 import { getSettings } from './settings';
 import ShaIcon from '../../../shaIcon';
 import { useFormComponentStatesHelpers } from '../../../../providers/form/useFormComponentStatesHelpers';
@@ -24,18 +24,22 @@ const AlertComponent: IToolboxComponent<IAlertProps> = {
   icon: <ExclamationCircleOutlined />,
   factory: (model: IAlertProps) => {
     const { isComponentHidden } = useFormComponentStatesHelpers();
+    const { globalState } = useGlobalState();
     const { data } = useFormData();
     const { text, alertType, description, showIcon, closable, icon, style } = model;
 
     const isHidden = isComponentHidden(model);
 
+    const evaluatedMessage = evaluateString(text, { data, globalState }) ?? '';
+    const evaluatedDescription = evaluateString(description, { data, globalState }) ?? '';
+
     if (isHidden) return null;
 
     return (
       <Alert
-        message={text}
+        message={evaluatedMessage}
         type={alertType}
-        description={description}
+        description={evaluatedDescription}
         showIcon={showIcon}
         style={getStyle(style, data)} // Temporary. Make it configurable
         closable={closable}
@@ -43,6 +47,10 @@ const AlertComponent: IToolboxComponent<IAlertProps> = {
       />
     );
   },
+  initModel: model => ({
+    alertType: 'info',
+    ...model,
+  }),
   settingsFormMarkup: data => getSettings(data),
   validateSettings: model => validateConfigurableComponentSettings(getSettings(model), model),
 };

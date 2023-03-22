@@ -1,9 +1,8 @@
 import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
-import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
+import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { BorderOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
-import settingsFormJson from './settingsForm.json';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import ConfigurableButton from './configurableButton';
 import { IButtonGroupButton } from '../../../../providers/buttonGroupConfigurator/models';
@@ -11,12 +10,11 @@ import { useSheshaApplication, useForm, useFormData } from '../../../../provider
 import { IButtonGroupItemBaseV0, migrateV0toV1 } from './migrations/migrate-v1';
 import { migrateV1toV2 } from './migrations/migrate-v2';
 import { useFormComponentStatesHelpers } from '../../../../providers/form/useFormComponentStatesHelpers';
+import { getSettings } from './settingsForm';
 
 export type IActionParameters = [{ key: string; value: string }];
 
 export interface IButtonProps extends IButtonGroupButton, IConfigurableFormComponent {}
-
-const settingsForm = settingsFormJson as FormMarkup;
 
 const ButtonField: IToolboxComponent<IButtonProps> = {
   type: 'button',
@@ -50,6 +48,7 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
     return (
       <ConfigurableFormItem model={fieldModel}>
         <ConfigurableButton
+          block={model?.block}
           formComponentId={model?.id}
           {...model}
           disabled={isDisabled}
@@ -59,8 +58,8 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
       </ConfigurableFormItem>
     );
   },
-  settingsFormMarkup: settingsForm,
-  validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
+  settingsFormMarkup: data => getSettings(data),
+  validateSettings: model => validateConfigurableComponentSettings(getSettings(model), model),
   initModel: model => {
     const buttonModel: IButtonProps = {
       ...model,

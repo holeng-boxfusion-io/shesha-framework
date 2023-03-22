@@ -1,6 +1,5 @@
 export * from './appConfigurator';
 export * from './auth';
-export * from './authorizationSettings';
 export * from './dataTable';
 export * from './dataTableSelection';
 export * from './itemListConfigurator';
@@ -35,3 +34,4 @@ export * from './sidebarMenuConfigurator';
 export * from './buttonGroupConfigurator';
 export * from './configurableActionsDispatcher';
 export * from './form/useFormComponentStatesHelpers';
+export * from './settings';

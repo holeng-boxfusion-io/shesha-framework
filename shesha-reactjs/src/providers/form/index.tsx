@@ -28,7 +28,7 @@ import {
 } from './actions';
 import { convertActions, convertSectionsToList, useFormDesignerComponents } from './utils';
 import { FormInstance } from 'antd';
-import useThunkReducer from 'react-hook-thunk-reducer';
+import useThunkReducer from '../../hooks/thunkReducer';
 import { IFormValidationErrors } from '../../interfaces';
 import { useConfigurableAction } from '../configurableActionsDispatcher';
 import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
