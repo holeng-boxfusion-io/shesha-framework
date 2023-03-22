@@ -1,10 +1,8 @@
 import {
   FORM_CONTEXT_INITIAL_STATE,
   IFormStateContext,
-  ISetVisibleComponentsPayload,
   ISetFormDataPayload,
   IRegisterActionsPayload,
-  ISetEnabledComponentsPayload,
 } from './contexts';
 import { FormMode, IFlatComponentsStructure, IFormSettings } from './models';
 import { FormActionEnums } from './actions';
@@ -19,8 +17,6 @@ const reducer = handleActions<IFormStateContext, any>(
       action: ReduxActions.Action<IFlatComponentsStructure>
     ) => {
       const { payload } = action;
-
-      //console.log('LOG: SetFlatComponentsAction', payload);
 
       return {
         ...state,
@@ -46,31 +42,6 @@ const reducer = handleActions<IFormStateContext, any>(
         formMode: payload,
       };
     },
-
-    // [FormActionEnums.SetVisibleComponents]: (
-    //   state: IFormStateContext,
-    //   action: ReduxActions.Action<ISetVisibleComponentsPayload>
-    // ) => {
-    //   const { payload } = action;
-
-    //   return {
-    //     ...state,
-    //     visibleComponentIds: payload.componentIds,
-    //     visibleComponentIdsIsSet: true,
-    //   };
-    // },
-
-    // [FormActionEnums.SetEnabledComponents]: (
-    //   state: IFormStateContext,
-    //   action: ReduxActions.Action<ISetEnabledComponentsPayload>
-    // ) => {
-    //   const { payload } = action;
-
-    //   return {
-    //     ...state,
-    //     enabledComponentIds: payload.componentIds,
-    //   };
-    // },
 
     [FormActionEnums.SetFormData]: (state: IFormStateContext, action: ReduxActions.Action<ISetFormDataPayload>) => {
       const { payload } = action;
