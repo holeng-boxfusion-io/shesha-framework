@@ -22,11 +22,15 @@ const settingsForm = settingsFormJson as FormMarkup;
 const StatusTagComponent: IToolboxComponent<IStatusTagProps> = {
   type: 'statusTag',
   name: 'Status Tag',
+  isInput: true,
+  isOutput: true,
   icon: <ArrowsAltOutlined />,
   factory: (model: IStatusTagProps) => {
-    const { formMode ,} = useForm();
+    const { formMode } = useForm();
     const { globalState } = useGlobalState();
     const { data } = useFormData();
+
+    console.log('LOGS:: StatusTagComponent data, model:', data, model);
 
     const getExpressionExecutor = (expression: string) => {
       if (!expression) {
@@ -94,8 +98,8 @@ const StatusTagComponent: IToolboxComponent<IStatusTagProps> = {
     return <StatusTag {...props} />;
   },
   settingsFormMarkup: settingsForm,
-  validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
-  initModel: model => ({
+  validateSettings: (model) => validateConfigurableComponentSettings(settingsForm, model),
+  initModel: (model) => ({
     mappings: JSON.stringify(DEFAULT_STATUS_TAG_MAPPINGS, null, 2) as any,
     ...model,
   }),

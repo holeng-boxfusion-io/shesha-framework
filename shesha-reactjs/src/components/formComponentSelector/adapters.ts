@@ -6,6 +6,7 @@ import TimeFieldComponent from 'designer-components/timeField';
 import NumberComponent from 'designer-components/numberField/numberField';
 import RefListStatusComponent from 'designer-components/refListStatus/index';
 import TextFieldComponent from 'designer-components/textField/textField';
+import StatusTagComponent from 'components/formDesigner/components/statusTag';
 
 import { IDictionary } from 'interfaces';
 
@@ -46,6 +47,9 @@ export const editorAdapters: IDictionary<IEditorAdapter> = {
       'dataSourceUrl',
       'entityTypeShortAlias',
     ]),
+  },
+  [StatusTagComponent.type]: {
+    propertiesFilter: getAllExceptPredicate([]),
   },
   [CheckboxComponent.type]: {
     propertiesFilter: getAllExceptPredicate([...allBaseProperties]),
