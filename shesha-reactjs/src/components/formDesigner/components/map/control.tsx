@@ -16,8 +16,6 @@ import {
   getZoom,
 } from './utils';
 
-import 'leaflet/dist/leaflet.css';
-
 export const MapControl: FC<IMapProps> = (props) => {
   const { layers } = props;
 
