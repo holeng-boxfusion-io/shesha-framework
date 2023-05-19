@@ -76,7 +76,6 @@ import SubForm from 'components/formDesigner/components/subForm';
 import Switch from 'components/formDesigner/components/switch/switch';
 import Tabs from 'components/formDesigner/components/tabs';
 import Text from 'components/formDesigner/components/text';
-import Map from 'components/formDesigner/components/map';
 import TextArea from 'components/formDesigner/components/textArea/textArea';
 import TextFieldComponent from 'designer-components/textField/textField';
 import TimeField from 'designer-components/timeField';
@@ -159,7 +158,6 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       Text,
       TimeField,
       ValidationErrors,
-      Map,
     ],
   },
   {

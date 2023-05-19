@@ -1,5 +1,15 @@
 import { executeExpression } from './../form/utils';
-import { ColumnSorting, DataTableColumnDto, IActionColumnProps, ITableActionColumn, IStoredFilter, ITableColumn, ITableFilter, SortDirection, ITableDataColumn } from './interfaces';
+import {
+  ColumnSorting,
+  DataTableColumnDto,
+  IActionColumnProps,
+  ITableActionColumn,
+  IStoredFilter,
+  ITableColumn,
+  ITableFilter,
+  SortDirection,
+  ITableDataColumn,
+} from './interfaces';
 import { IMatchData } from '../form/utils';
 import moment, { Moment, isMoment, isDuration, Duration } from 'moment';
 import { IDataTableUserConfig, MIN_COLUMN_WIDTH } from './contexts';
@@ -10,67 +20,71 @@ import { ProperyDataType } from 'interfaces/metadata';
 import { NestedPropertyMetadatAccessor } from 'providers/metadataDispatcher/contexts';
 
 // Filters should read properties as camelCase ?:(
-export const evaluateDynamicFilters = async (filters: IStoredFilter[], mappings: IMatchData[], propertyMetadataAccessor: NestedPropertyMetadatAccessor): Promise<IStoredFilter[]> => {
-  if (filters?.length === 0 || !mappings?.length) 
-    return filters;
+export const evaluateDynamicFilters = async (
+  filters: IStoredFilter[],
+  mappings: IMatchData[],
+  propertyMetadataAccessor: NestedPropertyMetadatAccessor
+): Promise<IStoredFilter[]> => {
+  if (filters?.length === 0 || !mappings?.length) return filters;
 
-  const convertedFilters = await Promise.all(filters.map(async (filter) => {
-    // correct way of processing JsonLogic rules
-    if (typeof filter.expression === 'object') {
+  const convertedFilters = await Promise.all(
+    filters.map(async (filter) => {
+      // correct way of processing JsonLogic rules
+      if (typeof filter.expression === 'object') {
+        const evaluator = (operator: string, args: object[], argIndex: number): IArgumentEvaluationResult => {
+          const argValue = args[argIndex];
+          // special handling for specifications
+          // todo: move `is_satisfied` operator name to constant
+          if (operator === 'is_satisfied' && argIndex === 1) {
+            // second argument is an expression that should be converted to boolean
+            if (typeof argValue === 'string') {
+              const evaluationContext = mappings.reduce((acc, item) => ({ ...acc, [item.match]: item.data }), {});
+              const evaluatedValue = executeExpression<boolean>(argValue, evaluationContext, false, (err) => {
+                console.error('Failed to convert value', err);
+                return null;
+              });
 
-      const evaluator = (operator: string, args: object[], argIndex: number): IArgumentEvaluationResult => {
-
-        const argValue = args[argIndex];
-        // special handling for specifications
-        // todo: move `is_satisfied` operator name to constant
-        if (operator === 'is_satisfied' && argIndex === 1) {
-          // second argument is an expression that should be converted to boolean
-          if (typeof (argValue) === 'string') {
-            const evaluationContext = mappings.reduce((acc, item) => ({ ...acc, [item.match]: item.data }), {});
-            const evaluatedValue = executeExpression<boolean>(argValue, evaluationContext, false, err => {
-              console.error('Failed to convert value', err);
-              return null;
-            });
-
-            return { handled: evaluatedValue !== null, value: Boolean(evaluatedValue) };
+              return { handled: evaluatedValue !== null, value: Boolean(evaluatedValue) };
+            }
           }
-        }
 
-        return { handled: false };
-      };
+          return { handled: false };
+        };
 
-      const evaluationData = {
-        hasDynamicExpression: false,
-        allFieldsEvaluatedSuccessfully: true,
-        unevaluatedExpressions: [],
-      };
+        const evaluationData = {
+          hasDynamicExpression: false,
+          allFieldsEvaluatedSuccessfully: true,
+          unevaluatedExpressions: [],
+        };
 
-      const getVariableDataType = (variable: string): Promise<string> => {
-        return propertyMetadataAccessor
-          ? propertyMetadataAccessor(variable).then(m => m.dataType)
-          : Promise.resolve('string');
-      };
+        const getVariableDataType = (variable: string): Promise<string> => {
+          return propertyMetadataAccessor
+            ? propertyMetadataAccessor(variable).then((m) => m.dataType)
+            : Promise.resolve('string');
+        };
 
-      const convertedExpression = await convertJsonLogicNode(filter.expression, {
-        argumentEvaluator: evaluator,
-        mappings,
-        getVariableDataType,
-        onEvaluated: args => {
-          evaluationData.hasDynamicExpression = true;
-          evaluationData.allFieldsEvaluatedSuccessfully = evaluationData.allFieldsEvaluatedSuccessfully && args.success;
-          if (args.unevaluatedExpressions && args.unevaluatedExpressions.length)
-            evaluationData.unevaluatedExpressions.push(...args.unevaluatedExpressions);
-        }
-      });
-      return {
-        ...filter,
-        ...evaluationData,
-        expression: convertedExpression,
-      } as IStoredFilter;
-    }
+        const convertedExpression = await convertJsonLogicNode(filter.expression, {
+          argumentEvaluator: evaluator,
+          mappings,
+          getVariableDataType,
+          onEvaluated: (args) => {
+            evaluationData.hasDynamicExpression = true;
+            evaluationData.allFieldsEvaluatedSuccessfully =
+              evaluationData.allFieldsEvaluatedSuccessfully && args.success;
+            if (args.unevaluatedExpressions && args.unevaluatedExpressions.length)
+              evaluationData.unevaluatedExpressions.push(...args.unevaluatedExpressions);
+          },
+        });
+        return {
+          ...filter,
+          ...evaluationData,
+          expression: convertedExpression,
+        } as IStoredFilter;
+      }
 
-    return Promise.resolve(filter);
-  }));
+      return Promise.resolve(filter);
+    })
+  );
 
   return convertedFilters;
 };
@@ -145,15 +159,14 @@ export const advancedFilter2JsonLogic = (advancedFilter: ITableFilter[], columns
   if (!advancedFilter || advancedFilter.length === 0) return null;
 
   const filterItems = advancedFilter
-    .map(f => {
+    .map((f) => {
       const property = { var: f.columnId };
-      const column = columns.find(c => c.id === f.columnId && c.columnType === 'data') as ITableDataColumn;
+      const column = columns.find((c) => c.id === f.columnId && c.columnType === 'data') as ITableDataColumn;
       // skip incorrect columns
-      if (!column || !column.dataType)
-        return null;
+      if (!column || !column.dataType) return null;
 
       const filterValues = Array.isArray(f.filter)
-        ? f.filter.map(filterValue => convertFilterValue(filterValue, column))
+        ? f.filter.map((filterValue) => convertFilterValue(filterValue, column))
         : convertFilterValue(f.filter, column);
 
       let filterOption = f.filterOption;
@@ -208,7 +221,7 @@ export const advancedFilter2JsonLogic = (advancedFilter: ITableFilter[], columns
 
       return null;
     })
-    .filter(f => Boolean(f));
+    .filter((f) => Boolean(f));
 
   return filterItems;
 };
@@ -229,7 +242,11 @@ export const getIncomingSelectedStoredFilterIds = (filters: IStoredFilter[], id:
   }
 };
 
-export const prepareColumn = (column: IConfigurableColumnsProps, columns: DataTableColumnDto[], userConfig: IDataTableUserConfig): ITableColumn => {
+export const prepareColumn = (
+  column: IConfigurableColumnsProps,
+  columns: DataTableColumnDto[],
+  userConfig: IDataTableUserConfig
+): ITableColumn => {
   const baseProps: ITableColumn = {
     id: column.id,
     accessor: column.id,
@@ -252,15 +269,12 @@ export const prepareColumn = (column: IConfigurableColumnsProps, columns: DataTa
     case 'data': {
       const dataProps = column as IDataColumnsProps;
 
-      const userColumn = userConfig?.columns?.find(c => c.id === dataProps.propertyName);
-      const colVisibility = userColumn?.show === null || userColumn?.show === undefined
-        ? column.isVisible
-        : userColumn?.show;
+      const userColumn = userConfig?.columns?.find((c) => c.id === dataProps.propertyName);
+      const colVisibility =
+        userColumn?.show === null || userColumn?.show === undefined ? column.isVisible : userColumn?.show;
 
       const srvColumn = dataProps.propertyName
-        ? columns.find(
-          c => camelcaseDotNotation(c.propertyName) === camelcaseDotNotation(dataProps.propertyName)
-        )
+        ? columns.find((c) => camelcaseDotNotation(c.propertyName) === camelcaseDotNotation(dataProps.propertyName))
         : {};
 
       const dataCol: ITableDataColumn = {
@@ -293,7 +307,7 @@ export const prepareColumn = (column: IConfigurableColumnsProps, columns: DataTa
       const actionColumn: ITableActionColumn = {
         ...baseProps,
         icon,
-        actionConfiguration
+        actionConfiguration,
       };
 
       return actionColumn;
@@ -312,16 +326,13 @@ export const prepareColumn = (column: IConfigurableColumnsProps, columns: DataTa
  */
 export const getTableDataColumns = (columns: ITableColumn[]): ITableDataColumn[] => {
   const result: ITableDataColumn[] = [];
-  columns.forEach(col => {
-    if (col.columnType === 'data')
-      result.push(col as ITableDataColumn);
+  columns.forEach((col) => {
+    if (col.columnType === 'data') result.push(col as ITableDataColumn);
   });
   return result;
 };
 
 export const getTableDataColumn = (columns: ITableColumn[], id: string): ITableDataColumn => {
-  const column = columns.find(c => c.id === id);
-  return column?.columnType === 'data'
-    ? column as ITableDataColumn
-    : null;
+  const column = columns.find((c) => c.id === id);
+  return column?.columnType === 'data' ? (column as ITableDataColumn) : null;
 };
